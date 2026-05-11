@@ -67,9 +67,9 @@ VALUES(1,'P01','F01','Booked','2025-10-01'),
  UPDATE Flights SET available_seats=available_seats+10 WHERE route_name='HN-PQ';
  UPDATE Flights SET ticket_price = ticket_price * (1  + 0.05) WHERE route_name='HN-PQ';
  
- -- DELETE FROM Bookings
- -- WHERE flight_status='Cancelled'
- -- OR booking_date< '2025-10-03'; -- để ra chạy cuối, hoặc cuối giờ bỏ ra sau cùng đoạn code
+DELETE FROM Bookings
+WHERE flight_status='Cancelled'
+OR booking_date< '2025-10-03'; -- để ra chạy cuối, hoặc cuối giờ bỏ ra sau cùng đoạn code
  
  SELECT flight_id,route_name,ticket_price FROM Flights 
  WHERE ticket_price BETWEEN 1200000 AND 2500000 
@@ -100,5 +100,23 @@ SELECT a.airline_name, f.route_name
 FROM Airlines a
 LEFT JOIN Flights f 
 ON a.airline_id=f.airline_id;
+SELECT flight_status AS status, COUNT(*) AS Total_Bookings
+FROM Bookings
+GROUP BY flight_status;
 
 
+SELECT p.full_name, COUNT(b.booking_id) AS Total_Bookings
+FROM Passengers p
+JOIN Bookings b
+ON p.passenger_id = b.passenger_id
+GROUP BY p.passenger_id, p.full_name
+HAVING COUNT(b.booking_id) >= 2;
+
+
+
+SELECT flight_id,route_name,ticket_price
+FROM Flights
+WHERE ticket_price < (
+    SELECT AVG(ticket_price)
+    FROM Flights
+);
